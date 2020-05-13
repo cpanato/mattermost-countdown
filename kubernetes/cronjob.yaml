@@ -1,0 +1,32 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: countdown
+  namespace: countdown
+spec:
+  schedule: "0 13 * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 2
+  suspend: false
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: Never
+          containers:
+          - name: countdown
+            image: ctadeu/countdown:latest
+            imagePullPolicy: Always
+            terminationMessagePolicy: "FallbackToLogsOnError"
+            args:
+            - -deadline=2020-06-16T00:00:00+00:00
+            env:
+            - name: MM_WEBHOOK
+              value: "YOUR_WEBHOOK"
+            resources:
+              requests:
+                memory: "200Mi"
+                cpu: "100m"
+              limits:
+                memory: "500Mi"
+                cpu: "500m"
